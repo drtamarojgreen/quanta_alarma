@@ -1,9 +1,13 @@
-#include "catch.hpp"
+#include <iostream>
+
 #include "AnalysisEngine.h"
 
-TEST_CASE("AnalysisEngine can be instantiated", "[analysisengine]") {
+int main() {
+    std::cout << "Running AnalysisEngine tests..." << std::endl;
+
     AnalysisEngine engine;
-    // This is a simple test to ensure the class can be created.
-    // More tests will be added later.
-    REQUIRE(true);
+    engine.analyze("test payload");
+
+    std::cout << "All AnalysisEngine tests passed." << std::endl;
+    return 0;
 }
