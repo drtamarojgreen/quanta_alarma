@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <chrono>
 
 namespace quanta {
 
@@ -20,6 +21,11 @@ struct Finding {
     bool suppressed = false;
     std::string suppression_reason;
     std::string fingerprint;
+    std::string source_file; // Item 146
+    std::string source_type = "rule"; // Item 146
+
+    // Item 143
+    std::string first_seen;
 };
 
 struct Rule {
@@ -29,17 +35,21 @@ struct Rule {
     int default_severity;
     std::string rationale;
     std::string remediation;
-    std::string owner;
-    bool deprecated = false;
+    std::string owner; // Item 6
+    bool deprecated = false; // Item 7
+    std::string false_positives; // Item 10
+    std::string false_negatives; // Item 11
 };
 
 class AnalysisEngine {
 public:
     AnalysisEngine();
-    std::vector<Finding> analyze(const std::string& text);
+    std::vector<Finding> analyze(const std::string& text, const std::string& source_name = "stdin");
 
     void addRule(const Rule& rule);
     void suppressFinding(const std::string& fingerprint, const std::string& reason);
+
+    const std::vector<Rule>& getRules() const { return rules; }
 
 private:
     std::vector<Rule> rules;
@@ -47,7 +57,12 @@ private:
 
     void loadDefaultRules();
     std::string generateFingerprint(const Finding& f);
-    bool matchesNearDuplicate(const std::string& s1, const std::string& s2);
+
+    // Item 14: Inline suppression
+    void processInlineSuppressions(const std::string& text, std::vector<Finding>& findings);
+
+    // Item 19: Near-duplicate normalization
+    std::string normalize(const std::string& s);
 };
 
 } // namespace quanta

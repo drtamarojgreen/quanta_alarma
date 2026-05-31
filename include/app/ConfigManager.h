@@ -15,6 +15,7 @@ struct Config {
     int failure_threshold = 80;
     bool quiet_mode = false;
     bool verbose_mode = false;
+    bool dry_run = false; // Item 50
     std::string profile = "default";
 };
 
@@ -23,6 +24,7 @@ public:
     ConfigManager();
     bool loadFromFile(const std::string& filepath);
     const Config& getConfig() const { return config; }
+    Config& mutableConfig() { return config; }
 
     void applyTo(AnalysisEngine& engine, RiskScorer& scorer);
 

@@ -1,0 +1,10 @@
+quanta_alarma
+unit_test
+bdd_test
+runner_test
+engine_test
+build/
+.objs/
+VisionLintTest
+*.o
+*.d
