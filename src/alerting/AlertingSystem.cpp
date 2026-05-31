@@ -1,4 +1,4 @@
-#include "AlertingSystem.h"
+#include "alerting/AlertingSystem.h"
 
 #include <iostream>
 

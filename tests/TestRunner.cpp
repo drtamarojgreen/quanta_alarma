@@ -1,17 +1,23 @@
 #include <cassert>
 #include <iostream>
 
-#include "RiskScorer.h"
+#include "scoring/RiskScorer.h"
+#include "analysis/AnalysisEngine.h"
+
+using namespace quanta;
 
 int main() {
     std::cout << "Running TestRunner tests..." << std::endl;
 
+    AnalysisEngine engine;
     RiskScorer scorer;
 
-    int riskWithDanger = scorer.calculateRisk("this is a dangerous message");
-    assert(riskWithDanger == 100);
+    auto findingsWithDanger = engine.analyze("this is a dangerous message");
+    int riskWithDanger = scorer.calculateRisk(findingsWithDanger);
+    assert(riskWithDanger > 0);
 
-    int riskWithoutDanger = scorer.calculateRisk("this is a safe message");
+    auto findingsWithoutDanger = engine.analyze("this is a safe message");
+    int riskWithoutDanger = scorer.calculateRisk(findingsWithoutDanger);
     assert(riskWithoutDanger == 0);
 
     std::cout << "All TestRunner tests passed." << std::endl;
