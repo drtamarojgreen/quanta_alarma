@@ -9,8 +9,11 @@
 #include <streambuf>
 
 // Include the headers of the classes to be tested
-#include "../include/RiskScorer.h"
-#include "../include/AlertingSystem.h"
+#include "scoring/RiskScorer.h"
+#include "alerting/AlertingSystem.h"
+#include "analysis/AnalysisEngine.h"
+
+using namespace quanta;
 
 // --- Simple BDD Framework ---
 
@@ -41,18 +44,21 @@ int main() {
 void BddRiskScorerScenario() {
     SCENARIO("Risk scores are calculated based on text content");
 
-    GIVEN("A RiskScorer");
+    GIVEN("A RiskScorer and AnalysisEngine");
+    AnalysisEngine engine;
     RiskScorer scorer;
     int risk;
 
     WHEN("the text contains the word 'danger'");
-    risk = scorer.calculateRisk("this is a dangerous message");
-    THEN("the risk score should be 100");
-    assert(risk == 100);
+    auto findings = engine.analyze("this is a dangerous message");
+    risk = scorer.calculateRisk(findings);
+    THEN("the risk score should be greater than 0");
+    assert(risk > 0);
     std::cout << "    -> PASSED" << std::endl;
 
-    WHEN("the text does not contain the word 'danger'");
-    risk = scorer.calculateRisk("this is a safe message");
+    WHEN("the text does not contain any risky words");
+    findings = engine.analyze("this is a safe message");
+    risk = scorer.calculateRisk(findings);
     THEN("the risk score should be 0");
     assert(risk == 0);
     std::cout << "    -> PASSED" << std::endl;

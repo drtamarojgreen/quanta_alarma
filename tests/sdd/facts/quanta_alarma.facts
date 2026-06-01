@@ -1,0 +1,7 @@
+# quanta_alarma.facts
+Situation: Default
+Is python_available = 1
+Is g++_available = 1
+Needs max_risk_score = 100
+Results rules_matched_count = 2
+Results final_risk_score_metric = 76
