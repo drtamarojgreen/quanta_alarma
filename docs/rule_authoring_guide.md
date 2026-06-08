@@ -1,16 +1,28 @@
 # Rule Authoring Guide
 
-To add a new rule to QuantaAlarma:
+## How to add a new rule
 
-1. Identify the pattern you want to detect.
-2. Determine the category (e.g., safety, security, privacy, reliability, policy).
-3. Assign a default severity (1-10).
-4. Write a concise rationale and remediation hint.
+1. Open `src/analysis/AnalysisEngine.cpp`.
+2. Locate the `loadDefaultRules()` method.
+3. Add a new `addRule` call with the following structure:
+   ```cpp
+   addRule({
+       "RULE_ID",       // Unique identifier
+       "category",      // safety, security, privacy, reliability, policy
+       "regex_pattern", // Case-insensitive regex
+       severity_int,    // 1-10
+       confidence_dbl,  // 0.0-1.0 base confidence
+       "rationale",     // Why this rule exists
+       "remediation",   // How to fix the finding
+       "owner-team",    // Responsible team
+       false,           // deprecated (bool)
+       "false_pos",     // Known false positive patterns
+       "false_neg",     // Known detection gaps
+       {"changelog"}    // History of changes
+   });
+   ```
 
-## Example
-
-```cpp
-addRule({"R041", "security", "eval\\(input\\)", 10, "Direct eval of input is highly dangerous.", "Use a safe parser instead."});
-```
-
-New rules can be added in `AnalysisEngine::loadDefaultRules()` or via a configuration file (to be fully implemented).
+## Best Practices
+- Keep regex patterns simple to avoid performance degradation.
+- Use specific categories to allow for accurate risk scoring and filtering.
+- Provide actionable remediation hints.

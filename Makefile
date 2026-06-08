@@ -47,6 +47,16 @@ engine_test: $(SRC_FILES) tests/AnalysisEngineTests.cpp
 sdd:
 	./tests/sdd/run_sdd_suite.sh
 
+# Item 117: Convenience targets
+check_rules: app
+	./quanta_alarma --list-rules
+
+check_profiles: app
+	./quanta_alarma --list-profiles
+
+validate_config: app
+	./quanta_alarma --dry-run "test"
+
 clean:
 	rm -f unit_test bdd_test runner_test engine_test $(APP_BIN)
 	rm -rf build

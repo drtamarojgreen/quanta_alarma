@@ -17,6 +17,10 @@ struct Config {
     bool verbose_mode = false;
     bool dry_run = false; // Item 50
     std::string profile = "default";
+
+    // Audit and tracing (Items 76, 77)
+    std::string checksum;
+    std::map<std::string, std::string> source_trace;
 };
 
 class ConfigManager {
@@ -27,9 +31,11 @@ public:
     Config& mutableConfig() { return config; }
 
     void applyTo(AnalysisEngine& engine, RiskScorer& scorer);
+    void printSummary() const; // Item 66
 
 private:
     Config config;
+    std::string calculateChecksum() const; // Item 76
 };
 
 } // namespace quanta

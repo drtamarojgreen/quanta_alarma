@@ -26,6 +26,10 @@ struct Finding {
 
     // Item 143
     std::string first_seen;
+
+    std::string status = "new"; // Item 144
+    std::string evidence; // Item 145
+    std::string stable_id; // Item 147
 };
 
 struct Rule {
@@ -33,12 +37,14 @@ struct Rule {
     std::string category;
     std::string pattern;
     int default_severity;
+    double base_confidence = 0.9; // Item 2: Replaces hardcoded values
     std::string rationale;
     std::string remediation;
     std::string owner; // Item 6
     bool deprecated = false; // Item 7
     std::string false_positives; // Item 10
     std::string false_negatives; // Item 11
+    std::vector<std::string> changelog; // Item 8
 };
 
 class AnalysisEngine {
@@ -48,12 +54,14 @@ public:
 
     void addRule(const Rule& rule);
     void suppressFinding(const std::string& fingerprint, const std::string& reason);
+    void setRuleSeverityOverride(const std::string& rule_id, int severity); // Item 1
 
     const std::vector<Rule>& getRules() const { return rules; }
 
 private:
     std::vector<Rule> rules;
     std::map<std::string, std::string> suppressions; // fingerprint -> reason
+    std::map<std::string, int> severity_overrides; // Item 1
 
     void loadDefaultRules();
     std::string generateFingerprint(const Finding& f);
