@@ -10,7 +10,7 @@ namespace quanta {
 
 const std::string APP_VERSION = "1.1.0-alpha"; // Item 93
 
-std::string escapeJSON(const std::string& s) {
+std::string Reporter::escapeJSON(const std::string& s) {
     std::stringstream ss;
     for (char c : s) {
         switch (c) {
@@ -32,7 +32,7 @@ std::string escapeJSON(const std::string& s) {
     return ss.str();
 }
 
-std::string escapeCSV(const std::string& s) {
+std::string Reporter::escapeCSV(const std::string& s) {
     std::string res = s;
     size_t pos = 0;
     while ((pos = res.find('"', pos)) != std::string::npos) {
@@ -116,13 +116,20 @@ std::string Reporter::toPlainText(const std::vector<Finding>& findings, bool red
 
 std::string Reporter::toSummaryOnly(const std::vector<Finding>& findings) { // Item 125
     std::stringstream ss;
-    ss << "Scan Summary:\n";
-    ss << "Total Findings: " << findings.size() << "\n";
+    ss << "{\n";
+    ss << "  \"summary\": {\n";
+    ss << "    \"total_findings\": " << findings.size() << ",\n";
     std::map<std::string, int> cat_counts;
     for (const auto& f : findings) cat_counts[f.category]++;
+    ss << "    \"categories\": {\n";
+    size_t j = 0;
     for (const auto& [cat, count] : cat_counts) {
-        ss << " - " << cat << ": " << count << "\n";
+        ss << "      \"" << escapeJSON(cat) << "\": " << count << (j == cat_counts.size() - 1 ? "" : ",") << "\n";
+        j++;
     }
+    ss << "    }\n";
+    ss << "  }\n";
+    ss << "}";
     return ss.str();
 }
 
@@ -132,12 +139,20 @@ std::string Reporter::toFindingsOnly(const std::vector<Finding>& findings, const
          ss << "[\n";
          for (size_t i = 0; i < findings.size(); ++i) {
              const auto& f = findings[i];
-             ss << "  {\"rule_id\": \"" << f.rule_id << "\", \"severity\": " << f.severity << "}" << (i == findings.size() - 1 ? "" : ",") << "\n";
+             ss << "  {\n";
+             ss << "    \"rule_id\": \"" << escapeJSON(f.rule_id) << "\",\n";
+             ss << "    \"severity\": " << f.severity << ",\n";
+             ss << "    \"fingerprint\": \"" << escapeJSON(f.fingerprint) << "\"\n";
+             ss << "  }" << (i == findings.size() - 1 ? "" : ",") << "\n";
          }
          ss << "]";
          return ss.str();
     }
-    return toPlainText(findings);
+    std::stringstream ss;
+    for (const auto& f : findings) {
+        ss << f.rule_id << ":" << f.fingerprint << " (" << f.severity << ")\n";
+    }
+    return ss.str();
 }
 
 std::vector<Finding> Reporter::filterFindings(const std::vector<Finding>& findings, int min_severity, const std::string& category, const std::string& path) { // Items 136-138

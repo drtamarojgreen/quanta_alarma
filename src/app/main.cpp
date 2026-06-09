@@ -28,6 +28,7 @@ void printUsage() {
               << "  --verbose               Show detailed analysis reasoning\n"
               << "  --dry-run               Validate configuration and exit\n"
               << "  --stdin                 Read input text from standard input\n"
+              << "  --validate-system       Perform structural audit and exit\n"
               << "  --threshold <n>         Set failure threshold (0-100)\n"
               << "  --min-severity <n>      Filter findings by minimum severity\n"
               << "  --filter-category <cat> Filter findings by category\n"
@@ -54,6 +55,7 @@ int main(int argc, char* argv[]) {
     std::string explain_rule_id;
     bool list_profiles = false;
     bool redact = false;
+    bool validate_system = false;
     int min_severity = 0;
     std::string filter_category;
     std::string filter_path;
@@ -63,13 +65,15 @@ int main(int argc, char* argv[]) {
     AlertingSystem alerter;
     ConfigManager configManager;
 
-    // Pass 1: Configuration and Profiles
+    // Pass 1: Configuration and Profiles (Structural setup)
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "--config" && i + 1 < argc) {
             config_path = argv[++i];
         } else if (arg == "--profile" && i + 1 < argc) {
             configManager.mutableConfig().profile = argv[++i];
+        } else if (arg == "--stdin") {
+            read_stdin = true;
         }
     }
 
@@ -111,6 +115,8 @@ int main(int argc, char* argv[]) {
                 configManager.mutableConfig().verbose_mode = true;
             } else if (arg == "--dry-run") {
                 configManager.mutableConfig().dry_run = true;
+        } else if (arg == "--validate-system") {
+            validate_system = true;
             } else if (arg == "--stdin") {
                 read_stdin = true;
             } else if (arg == "--help" || arg == "-h") {
@@ -126,8 +132,14 @@ int main(int argc, char* argv[]) {
     }
 
 
-    if (configManager.getConfig().dry_run) {
-        std::cout << "Configuration validated successfully." << std::endl;
+    if (validate_system) {
+        configManager.validateSystem(engine);
+        return 0;
+    }
+
+    if (configManager.getConfig().dry_run) { // Item 50: Functional Dry-Run
+        std::cout << "Configuration validated successfully.\n";
+        configManager.printSummary();
         return 0;
     }
 

@@ -20,6 +20,7 @@ struct Finding {
     size_t end_pos;
     bool suppressed = false;
     std::string suppression_reason;
+    std::string suppression_expiration; // Item 16
     std::string fingerprint;
     std::string source_file; // Item 146
     std::string source_type = "rule"; // Item 146
@@ -37,14 +38,14 @@ struct Rule {
     std::string category;
     std::string pattern;
     int default_severity;
-    double base_confidence = 0.9; // Item 2: Replaces hardcoded values
+    double base_confidence; // Item 2: Robust statistical basis
     std::string rationale;
     std::string remediation;
-    std::string owner; // Item 6
-    bool deprecated = false; // Item 7
-    std::string false_positives; // Item 10
-    std::string false_negatives; // Item 11
-    std::vector<std::string> changelog; // Item 8
+    std::string owner; // Item 6: Team/Person responsible
+    bool deprecated; // Item 7: Structural exclusion
+    std::string false_positives; // Item 10: Triage guidance
+    std::string false_negatives; // Item 11: Detection gap documentation
+    std::vector<std::string> changelog; // Item 8: Lifecycle history
 };
 
 class AnalysisEngine {

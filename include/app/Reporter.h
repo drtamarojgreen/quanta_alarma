@@ -9,6 +9,8 @@ namespace quanta {
 
 class Reporter {
 public:
+    static std::string escapeJSON(const std::string& s);
+    static std::string escapeCSV(const std::string& s);
     static std::string toJSON(const std::vector<Finding>& findings, bool redact = false); // Item 128
     static std::string toCSV(const std::vector<Finding>& findings, bool redact = false);
     static std::string toMarkdown(const std::vector<Finding>& findings, bool redact = false);

@@ -32,6 +32,7 @@ public:
 
     void applyTo(AnalysisEngine& engine, RiskScorer& scorer);
     void printSummary() const; // Item 66
+    void validateSystem(const AnalysisEngine& engine) const; // Item 58/98
 
 private:
     Config config;
