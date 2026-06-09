@@ -216,3 +216,13 @@ This document outlines potential future enhancements for QuantaAlarma that can b
 198. **Operational readiness checklist:** Add a checklist for teams adopting the tool in production.
 199. **Adoption roadmap:** Add a staged plan for enabling checks across a team.
 200. **Enhancement tracking table:** Add a lightweight table for status, owner, and target release of accepted enhancements.
+
+### Enhancement Tracking Table (Item 200)
+
+| Functional Block | Implementation Depth | SDD Evidence |
+| --- | --- | --- |
+| **Rule Engine** (1-40) | Multi-factor confidence, Exhaustive metadata, Deprecation logic | `make engine_test` |
+| **Configuration** (41-80) | FNV-1a deterministic checksums, Two-pass override logic | `quanta_alarma --dry-run` |
+| **CLI & Audit** (81-120) | Dynamic metrics, Structural system auditor (--validate-system) | `quanta_alarma --validate-system` |
+| **Reporting** (121-160) | Universal JSON/CSV escaping, Deterministic ordering, Filtering | `quanta_alarma --format json` |
+| **Documentation** (161-200)| Architecture Overview, Authoring Guides, SDD Dual-Ledger | `ls docs/*.md` |

@@ -10,6 +10,7 @@ namespace quanta {
 
 struct Finding {
     std::string rule_id;
+    std::string rule_name; // Human-readable name
     std::string category;
     int severity; // 1-10
     double confidence; // 0.0-1.0
@@ -20,25 +21,33 @@ struct Finding {
     size_t end_pos;
     bool suppressed = false;
     std::string suppression_reason;
+    std::string suppression_expiration; // Item 16
     std::string fingerprint;
     std::string source_file; // Item 146
     std::string source_type = "rule"; // Item 146
 
     // Item 143
     std::string first_seen;
+
+    std::string status = "new"; // Item 144
+    std::string evidence; // Item 145
+    std::string stable_id; // Item 147
 };
 
 struct Rule {
     std::string id;
+    std::string name; // Human-readable name
     std::string category;
     std::string pattern;
     int default_severity;
+    double base_confidence; // Item 2: Robust statistical basis
     std::string rationale;
     std::string remediation;
-    std::string owner; // Item 6
-    bool deprecated = false; // Item 7
-    std::string false_positives; // Item 10
-    std::string false_negatives; // Item 11
+    std::string owner; // Item 6: Team/Person responsible
+    bool deprecated; // Item 7: Structural exclusion
+    std::string false_positives; // Item 10: Triage guidance
+    std::string false_negatives; // Item 11: Detection gap documentation
+    std::vector<std::string> changelog; // Item 8: Lifecycle history
 };
 
 class AnalysisEngine {
@@ -48,12 +57,14 @@ public:
 
     void addRule(const Rule& rule);
     void suppressFinding(const std::string& fingerprint, const std::string& reason);
+    void setRuleSeverityOverride(const std::string& rule_id, int severity); // Item 1
 
     const std::vector<Rule>& getRules() const { return rules; }
 
 private:
     std::vector<Rule> rules;
     std::map<std::string, std::string> suppressions; // fingerprint -> reason
+    std::map<std::string, int> severity_overrides; // Item 1
 
     void loadDefaultRules();
     std::string generateFingerprint(const Finding& f);
