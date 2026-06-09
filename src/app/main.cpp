@@ -146,15 +146,15 @@ int main(int argc, char* argv[]) {
     if (list_rules) {
         std::cout << "Active Rules:\n";
         for (const auto& r : engine.getRules()) {
-            std::cout << " - [" << r.id << "] " << r.category << ": " << r.rationale << " (Severity: " << r.default_severity << ")\n";
+            std::cout << " - " << r.name << " [" << r.id << "] (" << r.category << "): " << r.rationale << " (Severity: " << r.default_severity << ")\n";
         }
         return 0;
     }
 
     if (!explain_rule_id.empty()) { // Item 95
         for (const auto& r : engine.getRules()) {
-            if (r.id == explain_rule_id) {
-                std::cout << "Rule: " << r.id << "\n"
+            if (r.id == explain_rule_id || r.name == explain_rule_id) {
+                std::cout << "Rule: " << r.name << " [" << r.id << "]\n"
                           << "Category: " << r.category << "\n"
                           << "Rationale: " << r.rationale << "\n"
                           << "Remediation: " << r.remediation << "\n"

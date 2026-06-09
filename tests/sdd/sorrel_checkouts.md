@@ -13,3 +13,4 @@
 - Observation: all_binary_stubs_purged = 1
 - Observation: overrides_precedence_verified = 1
 - Observation: technical_documentation_authored = 4
+- Observation: human_readable_naming_system = 1

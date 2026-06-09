@@ -10,6 +10,7 @@ namespace quanta {
 
 struct Finding {
     std::string rule_id;
+    std::string rule_name; // Human-readable name
     std::string category;
     int severity; // 1-10
     double confidence; // 0.0-1.0
@@ -35,6 +36,7 @@ struct Finding {
 
 struct Rule {
     std::string id;
+    std::string name; // Human-readable name
     std::string category;
     std::string pattern;
     int default_severity;

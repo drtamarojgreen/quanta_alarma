@@ -5,6 +5,7 @@
 - FORBID "minimal" or "demo" implementations for any enhancement item. Examples: checksums must be deterministic and exhaustive; metrics must be dynamically calculated.
 - FORBID unused data members in any struct. If a field exists, it must be integrated into the logic and reporting pipelines.
 - FORBID arbitrary numeric constants in logic. Confidence scores and risk multipliers must be derived from structured data or statistical match analysis.
+- REQUIRE all rules to have a descriptive, human-readable name; cryptic IDs must not be the primary user-facing identifier.
 
 ## Operational Integrity
 - REQUIRE robust data escaping (JSON/CSV) for all matched text to ensure report parseability.

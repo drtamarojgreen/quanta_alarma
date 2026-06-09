@@ -65,6 +65,7 @@ std::string Reporter::toJSON(const std::vector<Finding>& findings, bool redact) 
         const auto& f = findings[i];
         ss << "    {\n";
         ss << "      \"rule_id\": \"" << escapeJSON(f.rule_id) << "\",\n";
+        ss << "      \"rule_name\": \"" << escapeJSON(f.rule_name) << "\",\n";
         ss << "      \"category\": \"" << escapeJSON(f.category) << "\",\n";
         ss << "      \"severity\": " << f.severity << ",\n";
         ss << "      \"confidence\": " << f.confidence << ",\n";
@@ -81,9 +82,9 @@ std::string Reporter::toJSON(const std::vector<Finding>& findings, bool redact) 
 
 std::string Reporter::toCSV(const std::vector<Finding>& findings, bool redact) {
     std::stringstream ss;
-    ss << "rule_id,category,severity,confidence,matched_text,fingerprint,status,suppressed\n";
+    ss << "rule_name,rule_id,category,severity,confidence,matched_text,fingerprint,status,suppressed\n";
     for (const auto& f : findings) {
-        ss << escapeCSV(f.rule_id) << "," << escapeCSV(f.category) << "," << f.severity << "," << f.confidence
+        ss << escapeCSV(f.rule_name) << "," << escapeCSV(f.rule_id) << "," << escapeCSV(f.category) << "," << f.severity << "," << f.confidence
            << "," << (redact || f.suppressed ? "\"[REDACTED]\"" : escapeCSV(f.matched_text)) << ","
            << escapeCSV(f.fingerprint) << "," << escapeCSV(f.status) << ","
            << (f.suppressed ? "true" : "false") << "\n";
@@ -95,11 +96,11 @@ std::string Reporter::toMarkdown(const std::vector<Finding>& findings, bool reda
     std::stringstream ss;
     ss << "# QuantaAlarma Findings Report\n\n";
     ss << "Generated at: " << getCurrentTimestamp() << "\n\n";
-    ss << "| Rule ID | Category | Severity | Confidence | Fingerprint | Status |\n"; // Trimming (Item 129)
+    ss << "| Rule Name | ID | Category | Severity | Confidence | Status |\n";
     ss << "|--- |--- |--- |--- |--- |--- |\n";
     for (const auto& f : findings) {
-        ss << "| " << f.rule_id << " | " << f.category << " | " << f.severity << " | " << f.confidence
-           << " | " << f.fingerprint << " | " << (f.suppressed ? "Suppressed" : f.status) << " |\n";
+        ss << "| " << f.rule_name << " | " << f.rule_id << " | " << f.category << " | " << f.severity << " | " << f.confidence
+           << " | " << (f.suppressed ? "Suppressed" : f.status) << " |\n";
     }
     return ss.str();
 }
@@ -107,7 +108,7 @@ std::string Reporter::toMarkdown(const std::vector<Finding>& findings, bool reda
 std::string Reporter::toPlainText(const std::vector<Finding>& findings, bool redact) {
     std::stringstream ss;
     for (const auto& f : findings) {
-        ss << "[" << f.rule_id << "] (" << f.category << ") Severity: " << f.severity
+        ss << f.rule_name << " [" << f.rule_id << "] (" << f.category << ") Severity: " << f.severity
            << (f.suppressed ? " [SUPPRESSED]" : "") << " Status: " << f.status << " - "
            << (redact || f.suppressed ? "[REDACTED]" : f.matched_text) << "\n";
     }
@@ -140,7 +141,7 @@ std::string Reporter::toFindingsOnly(const std::vector<Finding>& findings, const
          for (size_t i = 0; i < findings.size(); ++i) {
              const auto& f = findings[i];
              ss << "  {\n";
-             ss << "    \"rule_id\": \"" << escapeJSON(f.rule_id) << "\",\n";
+             ss << "    \"rule_name\": \"" << escapeJSON(f.rule_name) << "\",\n";
              ss << "    \"severity\": " << f.severity << ",\n";
              ss << "    \"fingerprint\": \"" << escapeJSON(f.fingerprint) << "\"\n";
              ss << "  }" << (i == findings.size() - 1 ? "" : ",") << "\n";
@@ -150,7 +151,7 @@ std::string Reporter::toFindingsOnly(const std::vector<Finding>& findings, const
     }
     std::stringstream ss;
     for (const auto& f : findings) {
-        ss << f.rule_id << ":" << f.fingerprint << " (" << f.severity << ")\n";
+        ss << f.rule_name << " (" << f.severity << ")\n";
     }
     return ss.str();
 }
